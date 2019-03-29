@@ -1,0 +1,28 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" preload>
+    <script src="./test2.js"></script>
+    <script src="./useState.js"></script>
+</head>
+
+<body>
+    <nav-bar></nav-bar>
+
+    <script>
+        (function () {
+            const navBar = document.querySelector('nav-bar');
+            const [getState, setState] = useState(false);
+
+            const toggleState = () => {
+                setState(!getState());
+                navBar.setAttribute('menu-state', getState());
+            };
+
+            navBar.setAttribute('brand', 'SAMPLE NAVBAR');
+            navBar.addEventListener('onmenu', toggleState);
+        })();
+    </script>
+</body>
+
+</html>

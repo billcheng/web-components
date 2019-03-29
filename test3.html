@@ -1,0 +1,29 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" preload>
+    <script src="./test3.js"></script>
+    <script src="./useState.js"></script>
+</head>
+
+<body>
+    <my-slider min="10" max="50"></obp-slider>
+
+    <script>
+        (function () {
+            const slider = document.querySelector('my-slider');
+            const [getState, setState] = useState(30);
+
+            const handleChange = (e) => {
+                console.log(e.detail.value);
+                setState(e.detail.value);
+                slider.setAttribute('value', getState());
+            };
+
+            slider.setAttribute('value', getState());
+            slider.addEventListener('onChange', handleChange);
+        })();
+    </script>
+</body>
+
+</html>
