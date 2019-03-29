@@ -5,7 +5,7 @@
 <style>
     .container {
         width: 100%;
-        padding: 20px 5px;
+        padding: 40px 5px 20px;
         box-sizing: border-box;
         overflow-x: hidden;
     }
@@ -46,6 +46,34 @@
     button:focus {
         outline: none;
     }
+
+    .slider-pin {
+        display: flex;
+        position: absolute;
+        top: -50px;
+        left: -10px;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        margin-top: -2px;
+        margin-left: -2px;
+        transform: rotate(-45deg) scale(1) translate(0, 0);
+        border-radius: 50% 50% 50% 0%;
+        z-index: 1;
+        background-color: green;
+      }
+      .slider-pin-value-marker {
+        color: white;
+        font-family: Roboto, sans-serif;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 400;
+        letter-spacing: 0.0178571429em;
+        text-decoration: inherit;
+        text-transform: inherit;
+        transform: rotate(45deg);
+      }
 </style>
 
 <div class="container">
@@ -54,7 +82,7 @@
     </div>
     <div class="clickable" style="transform: translateX(0%)">
         <button></button>
-        
+        <div class="slider-pin"><span class="slider-pin-value-marker">21</span></div>
     </div>
 </div>
 `;
@@ -70,6 +98,7 @@
             this.position = shadowRoot.querySelector('.clickable');
             this.track = shadowRoot.querySelector('.track-container');
             this.button = shadowRoot.querySelector('button');
+            this.pinValue = shadowRoot.querySelector('span.slider-pin-value-marker');
         }
 
         connectedCallback() {
@@ -87,7 +116,6 @@
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
-            console.log(name, oldValue, newValue);
             switch (name) {
                 case 'value':
                     const min = +this.min || 0;
@@ -95,6 +123,7 @@
                     const range = max - min;
                     const percentage = (newValue - min) * 100 / range;
                     this.position.setAttribute('style', `transform: translateX(${percentage}%)`)
+                    this.pinValue.innerHTML = newValue;
                     break;
 
                 case 'min':
