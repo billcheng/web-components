@@ -13,6 +13,9 @@
     .track-container {
         position: relative;
         width: 100%;
+        padding: 10px 0;
+        height: 5px;
+        cursor: pointer;
     }
 
     .track {
@@ -30,13 +33,14 @@
 
     button {
         position: relative;
-        transform: translate(-9px, -7px);
+        transform: translate(-9px, -23px);
         height: 20px;
         width: 20px;
         border-radius: 50%;
         padding: 0;
         border: 1px solid black;
         background-color: rgba(255,255,255,0.9);
+        cursor: ew-resize;
     }
 
     button:focus {
@@ -50,6 +54,7 @@
     </div>
     <div class="clickable" style="transform: translateX(0%)">
         <button></button>
+        
     </div>
 </div>
 `;
@@ -63,10 +68,8 @@
             shadowRoot.appendChild(template.content.cloneNode(true));
 
             this.position = shadowRoot.querySelector('.clickable');
-            this.track = shadowRoot.querySelector('.track');
+            this.track = shadowRoot.querySelector('.track-container');
             this.button = shadowRoot.querySelector('button');
-            // this.brand = shadowRoot.querySelector('[brand]');
-            // this.menu = shadowRoot.querySelector('[hamburger]');
         }
 
         connectedCallback() {
