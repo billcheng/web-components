@@ -13,17 +13,21 @@
 </head>
 
 <body>
-    <my-slider min="10" max="50"></obp-slider>
+    <my-slider min="10" max="50"></my-slider>
+    <input type="number" readonly/>
 
     <script>
         (function () {
             const slider = document.querySelector('my-slider');
             const [getState, setState] = useState(30);
 
+            const input = document.querySelector('input');
+
             const handleChange = (e) => {
-                console.log(e.detail.value);
                 setState(e.detail.value);
                 slider.setAttribute('value', getState());
+
+                input.setAttribute('value', getState());
             };
 
             slider.setAttribute('value', getState());

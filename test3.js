@@ -101,14 +101,17 @@
             this.pinValue = shadowRoot.querySelector('span.slider-pin-value-marker');
         }
 
+        bindTrackMouseDown = this.trackMouseDown.bind(this);
+        bindTrackClick = this.trackClick.bind(this);
+
         connectedCallback() {
-            this.track.addEventListener('click', this.trackClick.bind(this));
-            this.button.addEventListener('mousedown', this.trackMouseOver.bind(this));
+            this.track.addEventListener('click', this.bindTrackClick);
+            this.button.addEventListener('mousedown', this.bindTrackMouseDown);
         }
 
         disconnectedCallback() {
-            this.trackClick.removeEventListner('click', this.trackClick);
-            this.button.removeEventListner('mousedown', this.trackMouseOver);
+            this.trackClick.removeEventListner('click', this.bindTrackClick);
+            this.button.removeEventListner('mousedown', this.bindTrackMouseDown);
         }
 
         static get observedAttributes() {
@@ -144,30 +147,33 @@
             this.dispatchEvent(new CustomEvent('onChange', { detail: { event, value } }));
         }
 
-        trackMouseOver() {
-            const originalOnMouseMove = document.body.onmousemove;
-            const originalOnMouseUp = document.body.onmouseup;
+        docMouseMove(mve) {
+            const e = mve || window.event;
+            let end = 0;
+            if (e.pageX)
+                end = e.pageX;
+            else if (e.clientX)
+                end = e.clientX;
 
-            document.body.onmousemove = function (mve) {
-                const e = mve || window.event;
-                let end = 0;
-                if (e.pageX)
-                    end = e.pageX;
-                else if (e.clientX)
-                    end = e.clientX;
+            const { left, width, right } = this.track.getBoundingClientRect();
+            const newX = Math.max(Math.min(end, right), left);
+            const min = +this.min || 0;
+            const max = +this.max || 100;
+            const value = Math.round(((newX - left) * (max - min) / width) + min);
+            this.dispatchEvent(new CustomEvent('onChange', { detail: { event, value } }));                    
+        }
 
-                const { left, width, right } = this.track.getBoundingClientRect();
-                const newX = Math.max(Math.min(end, right), left);
-                const min = +this.min || 0;
-                const max = +this.max || 100;
-                const value = Math.round(((newX - left) * (max - min) / width) + min);
-                this.dispatchEvent(new CustomEvent('onChange', { detail: { event, value } }));                    
-            }.bind(this);
+        thisDocMouseMove = this.docMouseMove.bind(this);
+        thisDocMouseUp = this.docMouseUp.bind(this);
 
-            document.body.onmouseup = function () {
-                document.body.onmousemove = originalOnMouseMove;
-                document.body.onmouseup = originalOnMouseUp;
-            };
+        docMouseUp() {
+            document.removeEventListener('mousemove', this.thisDocMouseMove);
+            document.removeEventListener('mouseup', this.thisDocMouseUp);
+        }
+
+        trackMouseDown() {
+            document.addEventListener('mousemove', this.thisDocMouseMove);
+            document.addEventListener('mouseup', this.thisDocMouseUp);
         }
 
     }

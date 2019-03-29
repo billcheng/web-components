@@ -13,8 +13,18 @@ class State {
     }
 }
 
-function useState(initialState) {
-    const state = new State(initialState);
+const stateNames = new Map();
+
+function useState(initialState, name) {
+
+    let state;
+
+    if (!!name && stateNames.has(name)) {
+        state = stateNames.get(name);
+    } else {
+        state = new State(initialState);
+        stateNames.set(name, state);
+    }
 
     return [
         state.getState.bind(state),
