@@ -23,7 +23,9 @@ function useState(initialState, name) {
         state = stateNames.get(name);
     } else {
         state = new State(initialState);
-        stateNames.set(name, state);
+        if (!!name) {
+            stateNames.set(name, state);
+        }
     }
 
     return [

@@ -63,8 +63,9 @@
         border-radius: 50% 50% 50% 0%;
         z-index: 1;
         background-color: green;
-      }
-      .slider-pin-value-marker {
+    }
+      
+    .slider-pin-value-marker {
         color: white;
         font-family: Roboto, sans-serif;
         font-size: 0.875rem;
@@ -74,7 +75,7 @@
         text-decoration: inherit;
         text-transform: inherit;
         transform: rotate(45deg);
-      }
+    }
 </style>
 
 <div class="container">
@@ -159,7 +160,7 @@
             else if (e.clientX)
                 end = e.clientX;
 
-            this.dispatch(end);                    
+            this.dispatch(end);
         }
 
         dispatch(end) {
