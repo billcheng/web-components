@@ -32,6 +32,7 @@
     }
 
     button {
+        touch-action: none;
         position: relative;
         transform: translate(-9px, -23px);
         height: 20px;
@@ -103,15 +104,18 @@
 
         bindTrackMouseDown = this.trackMouseDown.bind(this);
         bindTrackClick = this.trackClick.bind(this);
+        bindTouchStart = this.touchStart.bind(this);
 
         connectedCallback() {
             this.track.addEventListener('click', this.bindTrackClick);
             this.button.addEventListener('mousedown', this.bindTrackMouseDown);
+            this.button.addEventListener('touchstart', this.bindTouchStart);
         }
 
         disconnectedCallback() {
             this.trackClick.removeEventListner('click', this.bindTrackClick);
             this.button.removeEventListner('mousedown', this.bindTrackMouseDown);
+            this.button.removeEventListener('touchstart', this.bindTouchStart);
         }
 
         static get observedAttributes() {
@@ -155,16 +159,26 @@
             else if (e.clientX)
                 end = e.clientX;
 
+            this.dispatch(end);                    
+        }
+
+        dispatch(end) {
             const { left, width, right } = this.track.getBoundingClientRect();
             const newX = Math.max(Math.min(end, right), left);
             const min = +this.min || 0;
             const max = +this.max || 100;
             const value = Math.round(((newX - left) * (max - min) / width) + min);
-            this.dispatchEvent(new CustomEvent('onChange', { detail: { event, value } }));                    
+            this.dispatchEvent(new CustomEvent('onChange', { detail: { event, value } }));
+        }
+
+        docTouchMove(mve) {
+            this.dispatch(mve.targetTouches[0].clientX);
         }
 
         thisDocMouseMove = this.docMouseMove.bind(this);
         thisDocMouseUp = this.docMouseUp.bind(this);
+        thisDocTouchMove = this.docTouchMove.bind(this);
+        thisDocTouchEnd = this.docTouchEnd.bind(this);
 
         docMouseUp() {
             document.removeEventListener('mousemove', this.thisDocMouseMove);
@@ -174,6 +188,18 @@
         trackMouseDown() {
             document.addEventListener('mousemove', this.thisDocMouseMove);
             document.addEventListener('mouseup', this.thisDocMouseUp);
+        }
+
+        docTouchEnd() {
+            document.removeEventListener('touchmove', this.thisDocTouchMove);
+            document.removeEventListener('touchend', this.thisDocTouchEnd);
+            document.removeEventListener('touchcancel', this.thisDocTouchEnd);
+        }
+
+        touchStart() {
+            document.addEventListener('touchmove', this.thisDocTouchMove);
+            document.addEventListener('touchend', this.thisDocTouchEnd);
+            document.addEventListener('touchcancel', this.thisDocTouchEnd);
         }
 
     }
